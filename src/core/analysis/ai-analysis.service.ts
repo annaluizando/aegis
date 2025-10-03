@@ -1,17 +1,13 @@
 import "dotenv/config";
 import OpenAI from "openai";
-import { PackageJsonParserService } from "../parsers/package-json-parser.service";
-import { DockerfileParserService } from "../parsers/dockerfile-parser.service";
-import { GithubActionsParserService } from "../parsers/github-actions-parser.service";
+import { ParserManager } from "../parsers/parser-manager.service";
 import { RedactionService } from "../services/redaction.service";
 
 export class AIAnalysisService {
   private openai: OpenAI | undefined;
 
   constructor(
-    private readonly packageJsonParserService: PackageJsonParserService,
-    private readonly dockerfileParserService: DockerfileParserService,
-    private readonly githubActionsParserService: GithubActionsParserService,
+    private readonly parserManager: ParserManager,
     private readonly redactionService: RedactionService
   ) {}
 
@@ -31,11 +27,33 @@ export class AIAnalysisService {
   async analyze(projectPath: string): Promise<string> {
     const openai = this.getOpenAIClient();
 
-    const packageJson = this.packageJsonParserService.parse(
-      `${projectPath}/package.json`
-    );
-    const dockerfile = this.dockerfileParserService.parse(projectPath);
-    const githubActions = this.githubActionsParserService.parse(projectPath);
+    const allParsedData = this.parserManager.parseAll(projectPath);
+    const {
+      packageJson,
+      dockerfile,
+      githubActions,
+      requirementsTxt,
+      pomXml,
+      gemfile,
+      goMod,
+    } = allParsedData;
+
+    const detectedLanguages: string[] = [];
+    if (packageJson && Object.keys(packageJson).length > 0) {
+      detectedLanguages.push("Node.js/TypeScript");
+    }
+    if (requirementsTxt) {
+      detectedLanguages.push("Python");
+    }
+    if (pomXml) {
+      detectedLanguages.push("Java (Maven)");
+    }
+    if (gemfile) {
+      detectedLanguages.push("Ruby");
+    }
+    if (goMod) {
+      detectedLanguages.push("Go");
+    }
 
     const keywordsToRedact: string[] = [];
     if (packageJson.name) {
@@ -52,9 +70,14 @@ export class AIAnalysisService {
     );
 
     const prompt = this.buildPrompt(
+      detectedLanguages,
       packageJson,
       redactedDockerfile,
-      redactedGithubActions
+      redactedGithubActions,
+      requirementsTxt,
+      pomXml,
+      gemfile,
+      goMod
     );
 
     const response = await openai.chat.completions.create({
@@ -66,23 +89,62 @@ export class AIAnalysisService {
   }
 
   private buildPrompt(
+    detectedLanguages: string[],
     packageJson: any,
     dockerfile: string | undefined,
-    githubActions: string
+    githubActions: string,
+    requirementsTxt: string | null,
+    pomXml: string | null,
+    gemfile: string | null,
+    goMod: string | null
   ): string {
+    const languagePreamble =
+      detectedLanguages.length > 0
+        ? `The project's primary language(s) appear to be: **${detectedLanguages.join(
+            ", "
+          )}**. Please tailor your recommendations, especially for SAST, DAST, and dependency scanning, to these languages.`
+        : "";
+
     return `
       Act as a senior security engineer. Analyze the following project information and provide a step-by-step plan to improve its security.
       Format your response in Markdown. For each step, provide a clear title, a description of the recommendation, and, if applicable, a code snippet for implementation.
+
+      ${languagePreamble}
 
       When providing recommendations, please be as specific as possible:
       - For CI/CD pipeline changes, specify where to add the new job or step. For example, should it run before or after the build and test steps? Can it run in parallel?
       - Consider the project's performance and execution time. Recommend solutions that provide the best security benefit with the minimum performance impact.
       - For Dockerfile changes, indicate exactly where the new lines should be added.
+      - For Node.js/TypeScript \`package.json\`, suggest using built-in tools like \`npm audit\` or \`yarn audit\` to scan for vulnerabilities.
+      - For Python \`requirements.txt\`, suggest well-regarded tools for vulnerability scanning, such as \`pip-audit\` or \`safety\`.
+      - For Java \`pom.xml\`, suggest common dependency scanning tools, such as the \`dependency-check-maven\` plugin.
+      - For Ruby \`Gemfile\`, suggest common vulnerability scanning tools, such as \`bundler-audit\`.
+      - For Go \`go.mod\`, suggest official tools for vulnerability scanning, such as \`govulncheck\`.
 
       Project Context:
-      - **package.json:**
+      - **package.json (Node.js):**
       \`\`\`json
       ${JSON.stringify(packageJson, null, 2)}
+      \`\`\`
+
+      - **requirements.txt (Python):**
+      \`\`\`
+      ${requirementsTxt || "Not found"}
+      \`\`\`
+
+      - **pom.xml (Java/Maven):**
+      \`\`\`xml
+      ${pomXml || "Not found"}
+      \`\`\`
+
+      - **Gemfile (Ruby):**
+      \`\`\`ruby
+      ${gemfile || "Not found"}
+      \`\`\`
+
+      - **go.mod (Go):**
+      \`\`\`go
+      ${goMod || "Not found"}
       \`\`\`
 
       - **Dockerfile:**
@@ -92,7 +154,7 @@ export class AIAnalysisService {
 
       - **GitHub Actions Workflows:**
       \`\`\`json
-      ${githubActions}
+      ${githubActions || "Not found"}
       \`\`\`
 
       Please provide your step-by-step security improvement plan below.

@@ -6,6 +6,10 @@ export enum ProjectFileType {
   Dockerfile = "Dockerfile",
   DockerCompose = "docker-compose.yml",
   GithubActions = ".github/workflows",
+  RequirementsTxt = "requirements.txt",
+  PomXml = "pom.xml",
+  Gemfile = "Gemfile",
+  GoMod = "go.mod",
 }
 
 export class ProjectScannerService {
@@ -24,6 +28,22 @@ export class ProjectScannerService {
 
       if (files.includes("docker-compose.yml")) {
         foundFiles.push(ProjectFileType.DockerCompose);
+      }
+
+      if (files.includes("requirements.txt")) {
+        foundFiles.push(ProjectFileType.RequirementsTxt);
+      }
+
+      if (files.includes("pom.xml")) {
+        foundFiles.push(ProjectFileType.PomXml);
+      }
+
+      if (files.includes("Gemfile")) {
+        foundFiles.push(ProjectFileType.Gemfile);
+      }
+
+      if (files.includes("go.mod")) {
+        foundFiles.push(ProjectFileType.GoMod);
       }
 
       // Check for GitHub Actions
