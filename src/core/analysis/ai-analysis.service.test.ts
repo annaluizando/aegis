@@ -1,7 +1,7 @@
 import { AIAnalysisService } from "./ai-analysis.service";
-import { PackageJsonParserService } from "../services/package-json-parser.service";
-import { DockerfileParserService } from "../services/dockerfile-parser.service";
-import { GithubActionsParserService } from "../services/github-actions-parser.service";
+import { PackageJsonParserService } from "../parsers/package-json-parser.service";
+import { DockerfileParserService } from "../parsers/dockerfile-parser.service";
+import { GithubActionsParserService } from "../parsers/github-actions-parser.service";
 import { RedactionService } from "../services/redaction.service";
 import OpenAI from "openai";
 

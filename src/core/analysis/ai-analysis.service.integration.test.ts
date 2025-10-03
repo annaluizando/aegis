@@ -1,8 +1,5 @@
 import "dotenv/config";
 import { AIAnalysisService } from "./ai-analysis.service";
-import { PackageJsonParserService } from "../services/package-json-parser.service";
-import { DockerfileParserService } from "../services/dockerfile-parser.service";
-import { GithubActionsParserService } from "../services/github-actions-parser.service";
 
 // This test will only run if an OpenAI API key is available
 describe("AIAnalysisService Integration Test", () => {

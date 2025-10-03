@@ -1,4 +1,4 @@
-import { FileReaderService } from "./file-reader.service";
+import { FileReaderService } from "../utils/file-reader.service";
 
 export class PackageJsonParserService {
   constructor(private readonly fileReaderService: FileReaderService) {}

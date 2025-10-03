@@ -1,9 +1,6 @@
 #!/usr/bin/env node
 import "dotenv/config";
-import {
-  aiAnalysisService,
-  configService,
-} from "./core/services/service-container";
+import { aiAnalysisService, configService } from "./core/container";
 import chalk from "chalk";
 import inquirer from "inquirer";
 import * as fs from "fs";

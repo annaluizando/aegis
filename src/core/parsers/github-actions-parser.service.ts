@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as yaml from "js-yaml";
-import { FileReaderService } from "./file-reader.service";
+import { FileReaderService } from "../utils/file-reader.service";
 
 export interface GithubActionsWorkflow {
   jobs: {

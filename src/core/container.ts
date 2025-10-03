@@ -1,11 +1,11 @@
-import { FileReaderService } from "./file-reader.service";
-import { PackageJsonParserService } from "./package-json-parser.service";
-import { DockerfileParserService } from "./dockerfile-parser.service";
-import { GithubActionsParserService } from "./github-actions-parser.service";
-import { ProjectScannerService } from "./project-scanner.service";
-import { AIAnalysisService } from "../analysis/ai-analysis.service";
-import { RedactionService } from "./redaction.service";
-import { ConfigService } from "./config.service";
+import { FileReaderService } from "./utils/file-reader.service";
+import { PackageJsonParserService } from "./parsers/package-json-parser.service";
+import { DockerfileParserService } from "./parsers/dockerfile-parser.service";
+import { GithubActionsParserService } from "./parsers/github-actions-parser.service";
+import { ProjectScannerService } from "./services/project-scanner.service";
+import { AIAnalysisService } from "./analysis/ai-analysis.service";
+import { RedactionService } from "./services/redaction.service";
+import { ConfigService } from "./services/config.service";
 
 // instance to be shared
 const fileReaderService = new FileReaderService();

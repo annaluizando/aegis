@@ -1,4 +1,4 @@
-import { FileReaderService } from "./file-reader.service";
+import { FileReaderService } from "../utils/file-reader.service";
 import { Dockerfile, DockerfileParser } from "dockerfile-ast";
 
 export class DockerfileParserService {
