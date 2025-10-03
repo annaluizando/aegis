@@ -10,7 +10,7 @@
 
 # Aegis: An AI-Powered Pipeline Security Scanner
 
-Aegis is a command-line tool that uses AI to scan your project and provide intelligent security recommendations for your CI/CD pipeline and infrastructure configurations. It analyzes your project's context and leverages a powerful language model to deliver tailored, expert-level advice.
+Aegis is an AI-powered command-line tool that scans your project's infrastructure configuration, gets the key information and provide intelligent security recommendations for your CI/CD pipeline and infrastructure configurations. It analyzes your project's context and leverages a powerful language model to deliver tailored, expert-level advice.
 
 ## ✨ Features
 
