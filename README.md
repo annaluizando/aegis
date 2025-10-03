@@ -8,11 +8,11 @@
 ###     ### ########## ######## ########### ########       
 ```
 
-# Aegis: AI-Powered Pipeline Security Scanner
+# 🛡️ Aegis: AI-Powered Pipeline Security Scanner
 
 Aegis is a command-line tool that uses AI to scan your project and provide intelligent security recommendations for your CI/CD pipeline and infrastructure configurations. It analyzes your project's context and leverages a powerful language model to deliver tailored, expert-level advice.
 
-## Features
+## ✨ Features
 
 - **Context-Aware Scanning:** Automatically scans your project for key infrastructure and dependency files, including:
   - `package.json`
@@ -24,7 +24,7 @@ Aegis is a command-line tool that uses AI to scan your project and provide intel
   - **Performance Considerations:** Suggestions that balance security with pipeline performance and execution time.
   - **Actionable Snippets:** Ready-to-use code snippets for CI/CD and Dockerfile configurations.
 
-## Installation
+## 🧰 Installation
 
 1.  Clone the repository:
     ```bash
@@ -53,7 +53,7 @@ Aegis is a command-line tool that uses AI to scan your project and provide intel
     OPENAI_API_KEY=your_api_key_here
     ```
 
-## Usage
+## 🚀 Usage
 
 To scan a project, run the `aegis` command and provide the path to the project directory you want to analyze.
 
@@ -63,7 +63,7 @@ aegis /path/to/your/project
 
 The tool will then output the AI's analysis and recommendations to the console.
 
-## Running Tests
+## 🧪 Running Tests
 
 To run the unit tests, use the following command:
 
@@ -71,6 +71,6 @@ To run the unit tests, use the following command:
 npm test
 ```
 
-## License
+## 📄 License
 
-This project is licensed under the ISC License.
+This project is licensed under the GPL-3.0 License - see the [LICENSE](LICENSE) file for details.
