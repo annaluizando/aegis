@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 import "dotenv/config";
-import { aiAnalysisService } from "./core/services/service-container";
+import {
+  aiAnalysisService,
+  configService,
+} from "./core/services/service-container";
 import chalk from "chalk";
 import inquirer from "inquirer";
 import * as fs from "fs";
@@ -24,7 +27,6 @@ async function main() {
     const projectPath = args[0]!;
     await runScan(projectPath);
   } else {
-    // Interactive mode
     await interactiveMode();
   }
 }
@@ -63,45 +65,35 @@ async function interactiveMode() {
   console.log(chalk.blue(aegisAsciiArt));
 
   while (true) {
-    const { choice } = await inquirer.prompt([
-      {
-        type: "list",
-        name: "choice",
-        message: "What would you like to do?",
-        choices: ["Start Scan", "Set OpenAI API Key", "Exit"],
-      },
-    ]);
+    try {
+      const { choice } = await inquirer.prompt([
+        {
+          type: "list",
+          name: "choice",
+          message: "What would you like to do?",
+          choices: ["Start Scan", "Set OpenAI API Key", "Exit"],
+        },
+      ]);
 
-    switch (choice) {
-      case "Start Scan":
-        await runScan(process.cwd());
-        process.exit(0);
-      case "Set OpenAI API Key":
-        await setApiKeyPrompt();
-        break;
-      case "Exit":
-        console.log(chalk.bold("Goodbye!"));
-        process.exit(0);
+      switch (choice) {
+        case "Start Scan":
+          await runScan(process.cwd());
+          process.exit(0);
+        case "Set OpenAI API Key":
+          await configService.promptAndSetApiKey();
+          break;
+        case "Exit":
+          gracefulShutdown();
+      }
+    } catch (error) {
+      gracefulShutdown(true);
     }
   }
 }
 
-async function setApiKeyPrompt() {
-  const { apiKey } = await inquirer.prompt([
-    {
-      type: "password",
-      name: "apiKey",
-      message: "Please enter your OpenAI API Key:",
-      mask: "*",
-    },
-  ]);
-
-  const envPath = path.resolve(process.cwd(), ".env");
-  fs.writeFileSync(envPath, `OPENAI_API_KEY=${apiKey}\n`);
-  console.log(chalk.green("✅ OpenAI API Key saved to .env file."));
-  // Reload dotenv to use the new key in the current session
-  require("dotenv").config({ override: true });
-  console.log(chalk.cyan("API Key has been set for the current session."));
+function gracefulShutdown(addNewline = false) {
+  console.log(chalk.bold(`${addNewline ? "\n" : ""}Goodbye!`));
+  process.exit(0);
 }
 
 main();

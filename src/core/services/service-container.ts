@@ -5,6 +5,7 @@ import { GithubActionsParserService } from "./github-actions-parser.service";
 import { ProjectScannerService } from "./project-scanner.service";
 import { AIAnalysisService } from "../analysis/ai-analysis.service";
 import { RedactionService } from "./redaction.service";
+import { ConfigService } from "./config.service";
 
 // instance to be shared
 const fileReaderService = new FileReaderService();
@@ -27,3 +28,4 @@ export const aiAnalysisService = new AIAnalysisService(
 );
 
 export const projectScannerService = new ProjectScannerService();
+export const configService = new ConfigService();
