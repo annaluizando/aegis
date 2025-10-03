@@ -55,11 +55,18 @@ Aegis is a command-line tool that uses AI to scan your project and provide intel
 
 ## 🚀 Usage
 
-To scan a project, run the `aegis` command and provide the path to the project directory you want to analyze.
+There are two ways to run Aegis:
 
-```bash
-aegis /path/to/your/project
-```
+1.  **Directly:** Scan a specific project by providing its path.
+    ```bash
+    aegis /path/to/your/project
+    ```
+
+2.  **Interactively:** If you are already inside your project's directory, simply run the command without any arguments.
+    ```bash
+    aegis
+    ```
+    This will start an interactive session where you can choose to scan the current directory or configure your OpenAI API key.
 
 The tool will then output the AI's analysis and recommendations to the console.
 

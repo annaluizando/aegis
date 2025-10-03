@@ -6,25 +6,31 @@ import { GithubActionsParserService } from "../services/github-actions-parser.se
 import { RedactionService } from "../services/redaction.service";
 
 export class AIAnalysisService {
-  private openai: OpenAI;
+  private openai: OpenAI | undefined;
 
   constructor(
     private readonly packageJsonParserService: PackageJsonParserService,
     private readonly dockerfileParserService: DockerfileParserService,
     private readonly githubActionsParserService: GithubActionsParserService,
     private readonly redactionService: RedactionService
-  ) {
-    if (!process.env.OPENAI_API_KEY) {
-      throw new Error(
-        "OPENAI_API_KEY is not set in the environment variables."
-      );
+  ) {}
+
+  private getOpenAIClient(): OpenAI {
+    if (!this.openai) {
+      const apiKey = process.env.OPENAI_API_KEY;
+      if (!apiKey) {
+        throw new Error(
+          "OPENAI_API_KEY is not set. Please use the 'Set OpenAI API Key' option to set it."
+        );
+      }
+      this.openai = new OpenAI({ apiKey });
     }
-    this.openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
+    return this.openai;
   }
 
   async analyze(projectPath: string): Promise<string> {
+    const openai = this.getOpenAIClient();
+
     const packageJson = this.packageJsonParserService.parse(
       `${projectPath}/package.json`
     );
@@ -51,7 +57,7 @@ export class AIAnalysisService {
       redactedGithubActions
     );
 
-    const response = await this.openai.chat.completions.create({
+    const response = await openai.chat.completions.create({
       model: "gpt-4",
       messages: [{ role: "user", content: prompt }],
     });
